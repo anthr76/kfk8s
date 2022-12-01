@@ -9,12 +9,12 @@ on:
           Pass a json string with the images and channels to build. e.g.:
             [
               {
-                "app": "sonarr",
-                "channel": "main"
+                "app": "kubelet",
+                "channel": "1.24"
               },
               {
-                "app": "sonarr",
-                "channel": "develop"
+                "app": "kubelet",
+                "channel": "1.25"
               }
             ]
         required: false
