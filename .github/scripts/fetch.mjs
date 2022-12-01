@@ -10,7 +10,7 @@ $.verbose = false
 import { Published } from './published.mjs';
 
 let output = []
-for (const path of await glob(['apps/*/metadata.json'])) {
+for (const path of await glob(['k8s/*/metadata.json'])) {
   let {app, channels} = await fs.readJson(path);
 
   for (const channel of channels) {

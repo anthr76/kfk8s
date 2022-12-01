@@ -1,39 +1,43 @@
-FROM ghcr.io/onedr0p/alpine:rolling@sha256:c3323a3704b6770d02d838e8ab6a1692f9a676a21e5f0dc6d34df32e4fce6d57
+FROM docker.io/library/golang:bullseye as builder
 
-ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
+ARG TARGETPLATFORM
 
-ENV \
-    SONARR__INSTANCE_NAME="Sonarr" \
-    SONARR__BRANCH="${CHANNEL}" \
-    SONARR__PORT="8989" \
-    SONARR__ANALYTICS_ENABLED="False"
+ENV KUBE_GIT_TREE_STATE="clean"
 
-#hadolint ignore=DL3018
-RUN apk add --no-cache ca-certificates icu-libs libintl sqlite-libs xmlstarlet
-#hadolint ignore=DL3059
 RUN \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') export ARCH='x64' ;; \
-        'linux/arm64') export ARCH='arm64' ;; \
-    esac \
-    && \
-    curl -fsSL "https://download.sonarr.tv/v4/${SONARR__BRANCH}/${VERSION}/Sonarr.${SONARR__BRANCH}.${VERSION}.linux-musl-${ARCH}.tar.gz" \
-        | tar xzf - -C /app --strip-components=1 \
-    && \
-    rm -rf \
-        /app/Sonarr.Update \
-    && \
-    printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[onedr0p](https://github.com/onedr0p)" "${SONARR__BRANCH}" "${VERSION}" > /app/package_info \
-    && chown -R root:root /app \
-    && chmod -R 755 /app \
-    && rm -rf /tmp/*
+  apt-get update -qq \
+  && apt-get install -qqy \
+    rsync \
+  && wget -O kubernetes-${VERSION}.tar.gz -q https://github.com/kubernetes/kubernetes/archive/refs/tags/v${VERSION}.tar.gz \
+  && tar xf kubernetes-${VERSION}.tar.gz -C ./src \
+  && rm kubernetes-${VERSION}.tar.gz \
+  && cd ./src/kubernetes-${VERSION} \
+  && make WHAT="cmd/kubelet"
 
-USER kah
+FROM us.gcr.io/k8s-artifacts-prod/build-image/debian-iptables:bullseye-v1.5.1
+LABEL maintainer="Anthony Rabbito <hello@anthonyrabbito.com>"
 
-COPY ./apps/sonarr/${SONARR__BRANCH}/config.xml.tmpl /app/config.xml.tmpl
-COPY ./apps/sonarr/${SONARR__BRANCH}/entrypoint.sh /entrypoint.sh
-CMD ["/entrypoint.sh"]
+RUN clean-install --allow-change-held-packages libcap2
+RUN clean-install \
+  bash \
+  ca-certificates \
+  ceph-common \
+  cifs-utils \
+  e2fsprogs \
+  xfsprogs \
+  ethtool \
+  glusterfs-client \
+  iproute2 \
+  jq \
+  nfs-common \
+  socat \
+  udev \
+  util-linux
 
-LABEL org.opencontainers.image.title="${SONARR__INSTANCE_NAME} (${SONARR__BRANCH})"
+COPY --from=builder /go/src/kubernetes-*/_output/bin/kubelet /usr/local/bin/kubelet
+ENTRYPOINT ["/usr/local/bin/kubelet"]
+
+LABEL org.opencontainers.image.source="https://github.com/kubernetes/kubernetes"
+
