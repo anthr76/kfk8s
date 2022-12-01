@@ -8,10 +8,6 @@
 	name: #NonEmptyString
 	platforms: [...#AcceptedPlatforms]
 	stable: bool
-	tests: {
-		enabled: bool
-		type?:   =~"^(cli|web)$"
-	}
 }
 
 #NonEmptyString:           string & !=""
