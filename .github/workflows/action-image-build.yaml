@@ -65,10 +65,6 @@ jobs:
 
           chan_platforms=$(jq --raw-output '.platforms | join(",")' <<< "${chan_config}") && \
               echo "chan_platforms=${chan_platforms}" >> $GITHUB_OUTPUT
-          chan_tests_enabled=$(jq --raw-output '.tests.enabled' <<< "${chan_config}") && \
-              echo "chan_tests_enabled=${chan_tests_enabled}" >> $GITHUB_OUTPUT
-          chan_tests_type=$(jq --raw-output '.tests.type' <<< "${chan_config}") && \
-              echo "chan_tests_type=${chan_tests_type}" >> $GITHUB_OUTPUT
 
           chan_upstream_version=$(bash ./.github/scripts/upstream.sh "${{ matrix.image.app }}" "${{ matrix.image.channel }}") && \
               echo "chan_upstream_version=${chan_upstream_version}" >> $GITHUB_OUTPUT
