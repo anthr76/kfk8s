@@ -5,11 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       app:
-        description: "App (ex: radarr)"
+        description: "App (ex: kubelet)"
         default: ""
         required: true
       channels:
-        description: "Channels (ex: master,develop)"
+        description: "Channels (ex: 1.25,1.24)"
         default: ""
         required: true
       push:

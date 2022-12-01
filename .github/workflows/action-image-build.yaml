@@ -57,10 +57,10 @@ jobs:
         id: vars
         shell: bash
         run: |-
-          container_base=$(jq '.base' ./apps/${{ matrix.image.app }}/metadata.json)
+          container_base=$(jq '.base' ./k8s/${{ matrix.image.app }}/metadata.json)
           echo "chan_build_date=$(date --rfc-3339=seconds --utc)" >> $GITHUB_OUTPUT
 
-          chan_config=$(jq --arg chan "${{ matrix.image.channel }}" '(.channels | .[] | select(.name == $chan))' ./apps/${{ matrix.image.app }}/metadata.json)
+          chan_config=$(jq --arg chan "${{ matrix.image.channel }}" '(.channels | .[] | select(.name == $chan))' ./k8s/${{ matrix.image.app }}/metadata.json)
           chan_stable=$(jq --raw-output '.stable' <<< "${chan_config}")
 
           chan_platforms=$(jq --raw-output '.platforms | join(",")' <<< "${chan_config}") && \
@@ -73,22 +73,16 @@ jobs:
           chan_upstream_version=$(bash ./.github/scripts/upstream.sh "${{ matrix.image.app }}" "${{ matrix.image.channel }}") && \
               echo "chan_upstream_version=${chan_upstream_version}" >> $GITHUB_OUTPUT
 
-          if [[ "${chan_tests_enabled}" == true && "${chan_tests_type}" == "cli" ]]; then
-              echo "chan_goss_args=tail -f /dev/null" >> $GITHUB_OUTPUT
-          fi
-
           if [[ "${container_base}" == true ]]; then
               echo "chan_label_type=org.opencontainers.image.base" >> $GITHUB_OUTPUT
           else
               echo "chan_label_type=org.opencontainers.image" >> $GITHUB_OUTPUT
           fi
 
-          if test -f "./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile"; then
-              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile" >> $GITHUB_OUTPUT
-              echo "chan_goss_config=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/goss.yaml" >> $GITHUB_OUTPUT
+          if test -f "./k8s/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile"; then
+              echo "chan_dockerfile=./k8s/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile" >> $GITHUB_OUTPUT
           else
-              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/Dockerfile" >> $GITHUB_OUTPUT
-              echo "chan_goss_config=./apps/${{ matrix.image.app }}/ci/goss.yaml" >> $GITHUB_OUTPUT
+              echo "chan_dockerfile=./k8s/${{ matrix.image.app }}/Dockerfile" >> $GITHUB_OUTPUT
           fi
 
           if [[ "${chan_stable}" == true ]]; then
@@ -112,17 +106,10 @@ jobs:
       - name: Setup CUE
         uses: cue-lang/setup-cue@v1.0.0-alpha.2
 
-      - name: Setup Goss
-        if: ${{ steps.vars.outputs.chan_tests_enabled == 'true' }}
-        uses: e1himself/goss-installation-action@v1.1.0
-        with:
-          # renovate: datasource=github-releases depName=aelsabbahy/goss
-          version: v0.3.20
-
       - name: Validate image metadata
         shell: bash
         run: |-
-          cue vet --schema '#Spec' ./apps/${{ matrix.image.app }}/metadata.json ./metadata.rules.cue
+          cue vet --schema '#Spec' ./k8s/${{ matrix.image.app }}/metadata.json ./metadata.rules.cue
 
       - name: Build all platforms
         id: build_image
@@ -143,26 +130,11 @@ jobs:
             ${{ steps.vars.outputs.chan_label_type }}.created="${{ steps.vars.outputs.chan_build_date }}"
             ${{ steps.vars.outputs.chan_label_type }}.title="${{ matrix.image.app }} (${{ matrix.image.channel }})"
             ${{ steps.vars.outputs.chan_label_type }}.version="${{ steps.vars.outputs.chan_upstream_version }}"
-            ${{ steps.vars.outputs.chan_label_type }}.authors="Devin Buhl <devin@buhl.casa>"
-            ${{ steps.vars.outputs.chan_label_type }}.url="https://github.com/onedr0p/containers/apps/${{ matrix.image.app }}"
-            ${{ steps.vars.outputs.chan_label_type }}.build.url="https://github.com/onedr0p/containers/actions/runs/${{ github.run_id }}"
-            ${{ steps.vars.outputs.chan_label_type }}.documentation="https://github.com/onedr0p/containers/apps/${{ matrix.image.app }}/README.md"
+            ${{ steps.vars.outputs.chan_label_type }}.authors="Anthony Rabbito <hello@anthonyrabbito.com>"
+            ${{ steps.vars.outputs.chan_label_type }}.url="https://github.com/anth76/kfk8s/k8s/${{ matrix.image.app }}"
+            ${{ steps.vars.outputs.chan_label_type }}.build.url="https://github.com/anthr76/kfk8s/actions/runs/${{ github.run_id }}"
+            ${{ steps.vars.outputs.chan_label_type }}.documentation="https://github.com/anth76/kfk8s/k8s/${{ matrix.image.app }}/README.md"
             ${{ steps.vars.outputs.chan_label_type }}.revision="${{ github.sha }}"
-
-      - name: Run Goss tests
-        id: dgoss
-        if: ${{ steps.vars.outputs.chan_tests_enabled == 'true' }}
-        shell: bash
-        env:
-          CONTAINER_RUNTIME: podman
-          GOSS_FILE: ${{ steps.vars.outputs.chan_goss_config }}
-          GOSS_OPTS: |-
-            --sleep 5s --retry-timeout 60s --color --format documentation
-          GOSS_SLEEP: 2
-          GOSS_FILES_STRATEGY: cp
-          CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: >
-          dgoss run ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }} ${{ steps.vars.outputs.chan_goss_args }}
 
       - name: Push To GHCR
         id: push_to_ghcr
@@ -177,22 +149,20 @@ jobs:
 
       - name: Build successful
         id: build-success
-        if: ${{ always() && steps.build_image.outcome == 'success' && steps.dgoss.outcome == 'success' && (steps.push_to_ghcr.outcome == 'success' || steps.push_to_ghcr.outcome == 'skipped') }}
+        if: ${{ always() && steps.build_image.outcome == 'success' && (steps.push_to_ghcr.outcome == 'success' || steps.push_to_ghcr.outcome == 'skipped') }}
         run: |-
           echo "message=🎉 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})" >> $GITHUB_OUTPUT
           echo "color=0x00FF00" >> $GITHUB_OUTPUT
           echo "::group::Container log output"
-          cat "goss_container_log_output"
           echo "::endgroup::"
 
       - name: Build failed
         id: build-failed
-        if: ${{ always() && (steps.build_image.outcome == 'failure' || steps.dgoss.outcome == 'failure' || steps.push_to_ghcr.outcome == 'failure') }}
+        if: ${{ always() && (steps.build_image.outcome == 'failure' || steps.push_to_ghcr.outcome == 'failure') }}
         run: |-
           echo "message=💥 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})" >> $GITHUB_OUTPUT
           echo "color=0xFF0000" >> $GITHUB_OUTPUT
           echo "::group::Container log output"
-          cat "goss_container_log_output"
           echo "::endgroup::"
 
       - name: Send Discord Webhook
