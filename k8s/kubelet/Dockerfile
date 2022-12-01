@@ -5,7 +5,6 @@ ARG CHANNEL
 ARG TARGETPLATFORM
 
 ENV KUBE_GIT_TREE_STATE="clean"
-ENV KUBE_GIT_VERSION=v${VERSION}
 
 RUN \
   apt-get update -qq \
@@ -15,11 +14,29 @@ RUN \
   && tar xf kubernetes-${VERSION}.tar.gz -C ./src \
   && rm kubernetes-${VERSION}.tar.gz \
   && cd ./src/kubernetes-${VERSION} \
-  # && source hack/lib/init.sh \
-  # && kube::golang::setup_env \
-  && make WHAT="cmd/kubelet" \
-  && ls 
+  && make WHAT="cmd/kubelet"
 
+FROM us.gcr.io/k8s-artifacts-prod/build-image/debian-iptables:bullseye-v1.5.1
+LABEL maintainer="Anthony Rabbito <hello@anthonyrabbito.com>"
 
+RUN clean-install --allow-change-held-packages libcap2
+RUN clean-install \
+  bash \
+  ca-certificates \
+  ceph-common \
+  cifs-utils \
+  e2fsprogs \
+  xfsprogs \
+  ethtool \
+  glusterfs-client \
+  iproute2 \
+  jq \
+  nfs-common \
+  socat \
+  udev \
+  util-linux
 
-LABEL org.opencontainers.image.source="https://github.com/"
+COPY --from=builder /go/src/kubernetes-*/_output/bin/kubelet /usr/local/bin/kubelet
+ENTRYPOINT ["/usr/local/bin/kubelet"]
+
+LABEL org.opencontainers.image.source="https://github.com/kubernetes/kubernetes"
