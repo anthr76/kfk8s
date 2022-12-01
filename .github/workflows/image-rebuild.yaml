@@ -6,9 +6,9 @@ on:
     branches:
       - main
     paths:
-      - "apps/**"
-      - "!apps/**/metadata.json"
-      - "!apps/**/README.md"
+      - "k8s/**"
+      - "!k8s/**/metadata.json"
+      - "!k8s/**/README.md"
 
 jobs:
   get-changes:

@@ -22,7 +22,7 @@ runs:
         list-files: json
         filters: |
           addedOrModified:
-            - added|modified: 'apps/*/**'
+            - added|modified: 'k8s/*/**'
     - name: Collect changed containers
       if: |
         steps.filter.outputs.addedOrModified == 'true'

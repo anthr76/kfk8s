@@ -18,7 +18,7 @@ if [ "$1" == "all" ]; then
 fi
 
 declare -A app_channel_array
-find ./apps -name metadata.json | while read -r metadata; do
+find ./k8s -name metadata.json | while read -r metadata; do
     declare -a __channels=()
     app="$(jq --raw-output '.app' "${metadata}")"
     jq --raw-output -c '.channels | .[]' "${metadata}" | while read -r channels; do
