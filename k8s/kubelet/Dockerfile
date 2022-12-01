@@ -4,6 +4,9 @@ ARG VERSION
 ARG CHANNEL
 ARG TARGETPLATFORM
 
+ENV KUBE_GIT_TREE_STATE="clean"
+ENV KUBE_GIT_VERSION=v${VERSION}
+
 RUN \
   apt-get update -qq \
   && apt-get install -qqy \
@@ -12,7 +15,9 @@ RUN \
   && tar xf kubernetes-${VERSION}.tar.gz -C ./src \
   && rm kubernetes-${VERSION}.tar.gz \
   && cd ./src/kubernetes-${VERSION} \
-  && make test WHAT=./pkg/kubelet GOFLAGS=-v \
+  # && source hack/lib/init.sh \
+  # && kube::golang::setup_env \
+  && make WHAT="cmd/kubelet" \
   && ls 
 
 
