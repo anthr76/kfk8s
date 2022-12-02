@@ -255,6 +255,7 @@ storage:
           readOnlyPort: 0
           resolvConf: /run/systemd/resolve/resolv.conf
           volumePluginDir: /var/lib/kubelet/volumeplugins
+          runtimeRequestTimeout: 10m
     - path: /etc/kubernetes/bootstrap/layout
       mode: 0544
       contents:
