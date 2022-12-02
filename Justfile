@@ -1,5 +1,5 @@
 CHANNEL := "1.25"
-COMPONENT := "kubelet"
+COMPONENT := "kubele"
 REGISTRY := "ghcr.io"
 USERNAME := "anthr76"
 REGISTRY_AND_USERNAME := REGISTRY/USERNAME
@@ -10,33 +10,37 @@ _default:
 
 # Builds a container to containers-storage under the manifest COMPONENT:CHANNEL
 build:
-    @echo Building For: Channel={{ CHANNEL }} Component={{ COMPONENT }} Platform=`just _get_build_platform`
+    @echo Building For: Channel={{ CHANNEL }} Component={{ COMPONENT }} Platform=`just MULTIPLATFORM={{MULTIPLATFORM}} _get_build_platform`
     #!/bin/bash
     set -euxo pipefail
     buildah bud \
     --build-arg CHANNEL={{ CHANNEL }} \
-    --build-arg VERSION=`just _get_upstream_version` \
+    --build-arg VERSION=`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version` \
     --jobs 4 \
-    --platform `just _get_build_platform` \
-    -f `just _get_build_dockerfile` \
+    --platform `just MULTIPLATFORM={{MULTIPLATFORM}} _get_build_platform` \
+    --file `just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_build_dockerfile` \
     --manifest {{ COMPONENT }}:{{ CHANNEL }} \
-    --label `just _get_build_label_type` \
-    --label `just _get_build_label_type`.created="`date --rfc-3339=seconds --utc`" \
-    --label `just _get_build_label_type`.title="{{COMPONENT}} ({{ CHANNEL }})" \
-    --label `just _get_build_label_type`.version="`just _get_upstream_version`" \
-    --label `just _get_build_label_type`.authors="`git config user.name` <`git config user.email`>" \
-    --label `just _get_build_label_type`.url="https://github.com/anth76/kfk8s/k8s/{{ COMPONENT }}" \
-    --label `just _get_build_label_type`.documentation="https://github.com/anth76/kfk8s/k8s/{{ COMPONENT }}/README.md" \
-    --label `just _get_build_label_type`.revision="`git describe --always --dirty`" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type` \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.created="`date --rfc-3339=seconds --utc`" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.title="{{COMPONENT}} ({{ CHANNEL }})" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.version="`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version`" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.authors="`git config user.name` <`git config user.email`>" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.url="https://github.com/anth76/kfk8s/k8s/{{ COMPONENT }}" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.documentation="https://github.com/anth76/kfk8s/k8s/{{ COMPONENT }}/README.md" \
+    --label `just COMPONENT={{COMPONENT}} _get_build_label_type`.revision="`git describe --always --dirty`" \
     .
 # Pushes a built image to specified registry.
 build-push: _build-tag
-    buildah manifest push --all {{REGISTRY_AND_USERNAME}}/`just _get_image`:`just _get_upstream_version` docker://{{REGISTRY_AND_USERNAME}}/`just _get_image`:`just _get_upstream_version`
-    buildah manifest push --all {{REGISTRY_AND_USERNAME}}/`just _get_image`:`just _get_upstream_version` docker://{{REGISTRY_AND_USERNAME}}/`just _get_image`:rolling 
+    buildah manifest push --all {{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version` \
+      docker://{{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:`just  COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version`
+    buildah manifest push --all {{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version` \
+      docker://{{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:rolling 
 
 _build-tag: build
-    buildah tag {{ COMPONENT }}:{{ CHANNEL }} {{REGISTRY_AND_USERNAME}}/`just _get_image`:`just _get_upstream_version`
-    buildah tag {{ COMPONENT }}:{{ CHANNEL }} {{REGISTRY_AND_USERNAME}}/`just _get_image`:rolling
+    buildah tag {{ COMPONENT }}:{{ CHANNEL }} \
+      {{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_upstream_version`
+    buildah tag {{ COMPONENT }}:{{ CHANNEL }} \
+      {{REGISTRY_AND_USERNAME}}/`just COMPONENT={{COMPONENT}} CHANNEL={{CHANNEL}} _get_image`:rolling
 
 _get_upstream_version:
     ./.github/scripts/upstream.sh {{ COMPONENT }} {{ CHANNEL }}

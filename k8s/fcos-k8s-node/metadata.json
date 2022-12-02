@@ -1,0 +1,30 @@
+{
+  "app": "fcos-k8s-node",
+  "base": true,
+  "channels": [
+    {
+      "name": "stable",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "stable": true
+    },
+    {
+      "name": "testing",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "stable": false
+    },
+    {
+      "name": "next",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "stable": false
+    }
+  ]
+}
