@@ -60,7 +60,7 @@ _get_build_platform:
     #!/bin/bash
     set -euxo pipefail
     if [[ {{MULTIPLATFORM}} == true ]]; then
-        echo $(jq --raw-output '.platforms | join(",")' <<< "${chan_config}")
+        echo $(jq --raw-output '.platforms | join(",")' <<< `just _get_channel_config`)
     else
         echo "linux/$(podman info -f json | jq -r '.host.arch')"
     fi
