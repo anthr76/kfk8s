@@ -1,6 +1,6 @@
 {
   "app": "fcos-k8s-node",
-  "base": true,
+  "base": false,
   "channels": [
     {
       "name": "stable",
