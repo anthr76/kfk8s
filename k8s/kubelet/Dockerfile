@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:bullseye as builder
+FROM docker.io/library/golang:bullseye@sha256:399a26403fd88e2f64a85891f59953b5a6ade5319c4435ac46dfcb133ada5cf3 as builder
 
 ARG VERSION
 ARG CHANNEL
@@ -16,7 +16,7 @@ RUN \
   && cd ./src/kubernetes-${VERSION} \
   && make WHAT="cmd/kubelet"
 
-FROM us.gcr.io/k8s-artifacts-prod/build-image/debian-iptables:bullseye-v1.5.1
+FROM us.gcr.io/k8s-artifacts-prod/build-image/debian-iptables:bullseye-v1.5.1@sha256:04bfcd818ffc2c6a880c8d3987c932098c32fd412de192b5e7fd0ae768b94781
 LABEL maintainer="Anthony Rabbito <hello@anthonyrabbito.com>"
 
 RUN clean-install --allow-change-held-packages libcap2
