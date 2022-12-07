@@ -141,7 +141,7 @@ jobs:
           tags: ${{ steps.build_image.outputs.tags }}
           registry: ${{ env.IMAGE_REGISTRY_GHCR }}/${{ env.IMAGE_NAMESPACE }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.TOKEN }}
 
       - name: Build successful
         id: build-success
