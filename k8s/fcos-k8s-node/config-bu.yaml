@@ -62,6 +62,7 @@ systemd:
         Description=Kubelet Controller (System Container)
         Wants=rpc-statd.service
         ConditionPathExists=/etc/kubernetes/bootstrap/node.controller
+        RequiresMountsFor=/run/containers/storage
         [Service]
         Environment=KUBELET_IMAGE=quay.io/poseidon/kubelet:v1.24.4
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
@@ -110,6 +111,7 @@ systemd:
         Description=Kubelet Worker (System Container)
         Wants=rpc-statd.service
         ConditionPathExists=/etc/kubernetes/bootstrap/node.worker
+        RequiresMountsFor=/run/containers/storage
         [Service]
         Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.8
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
@@ -342,11 +344,12 @@ storage:
         inline: |
           [crio]
             [crio.runtime]
+              default_runtime = "crun"
               [crio.runtime.runtimes]
-                [crio.runtime.runtimes.runc]
+                [crio.runtime.runtimes.crun]
                   runtime_config_path = ""
-                  runtime_path = "/usr/bin/runc"
+                  runtime_path = "/usr/bin/crun"
                   runtime_type = "oci"
-                  runtime_root = "/run/runc"
+                  runtime_root = "/run/crun"
                   allowed_annotations = ["io.containers.trace-syscall", "io.kubernetes.cri-o.TrySkipVolumeSELinuxLabel"]
                   DisallowedAnnotations = ["io.kubernetes.cri.rdt-class", "io.kubernetes.cri-o.userns-mode", "io.kubernetes.cri-o.cgroup2-mount-hierarchy-rw", "io.kubernetes.cri-o.ShmSize", "io.kubernetes.cri-o.Devices", "irq-load-balancing.crio.io", "io.kubernetes.cri-o.UnifiedCgroup", "cpu-load-balancing.crio.io", "cpu-quota.crio.io"]
