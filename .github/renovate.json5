@@ -13,5 +13,14 @@
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
+    {
+      description: "Generic Docker image Regex manager",
+      fileMatch: ["k8s/.+\\.ya?ml$"],
+      matchStrings: [
+        "# renovate: docker-image( versioning=(?<versioning>.*=?))?\n .*: (?<depName>.*?):(?<currentValue>.*=?)",
+      ],
+      datasourceTemplate: "docker",
+      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+    },
   ],
 }

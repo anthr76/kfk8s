@@ -64,7 +64,8 @@ systemd:
         ConditionPathExists=/etc/kubernetes/bootstrap/node.controller
         RequiresMountsFor=/run/containers/storage
         [Service]
-        Environment=KUBELET_IMAGE=quay.io/poseidon/kubelet:v1.24.4
+        # renovate: docker-image
+        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.8
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /opt/cni/bin
@@ -113,6 +114,7 @@ systemd:
         ConditionPathExists=/etc/kubernetes/bootstrap/node.worker
         RequiresMountsFor=/run/containers/storage
         [Service]
+        # renovate: docker-image
         Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.8
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
