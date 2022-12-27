@@ -5,7 +5,7 @@ COPY ./k8s/fcos-k8s-node/config-bu.yaml /config.bu.yaml
 RUN \
   butane --pretty --strict config.bu.yaml > /config.ign
 
-FROM quay.io/fedora/fedora-coreos:stable@sha256:f8c429b73eed8cff87bd67ddb957e4fd1ab5df6ca78e6aa11e8b5d053955d94e
+FROM quay.io/fedora/fedora-coreos:stable@sha256:0aac03f2bfcbf8f7be8eaa8f3b37d1140989100da2091a10a2f884a6c8086ed7
 
 COPY --from=butane /config.ign config.ign
 
