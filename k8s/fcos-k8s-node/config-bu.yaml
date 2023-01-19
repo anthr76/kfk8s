@@ -304,7 +304,11 @@ storage:
     - path: /etc/sysctl.d/max-user-watches.conf
       contents:
         inline: |
-          fs.inotify.max_user_watches=16184
+          fs.inotify.max_user_watches=1048576
+    - path: /etc/sysctl.d/max-user-instances.conf
+      contents:
+        inline: |
+          fs.inotify.max_user_watches=8192
     - path: /etc/sysctl.d/reverse-path-filter.conf
       contents:
         inline: |
