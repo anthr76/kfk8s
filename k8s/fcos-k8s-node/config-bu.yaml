@@ -182,14 +182,14 @@ systemd:
         [Service]
         Type=oneshot
         RemainAfterExit=true
-        WorkingDirectory=/opt/bootstrap
+        WorkingDirectory=/etc/kubernetes/bootstrap
         Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.9
         ExecStartPre=-/usr/bin/podman rm bootstrap
         ExecStart=/usr/bin/podman run --name bootstrap \
             --network host \
             --volume /etc/kubernetes/pki:/etc/kubernetes/pki:ro,z \
-            --volume /opt/bootstrap/assets:/assets:ro,Z \
-            --volume /opt/bootstrap/apply:/apply:ro,Z \
+            --volume /etc/kubernetes/bootstrap/assets:/assets:ro,z \
+            --volume /etc/kubernetes/apply:/apply:ro,z \
             --entrypoint=/apply \
             ${KUBELET_IMAGE}
         ExecStartPost=/bin/touch /opt/bootstrap/bootstrap.done
