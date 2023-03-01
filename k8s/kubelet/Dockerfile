@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:bullseye@sha256:c3fbdc381fb6b78325c2a5cc1bf0c288c0d173568fba3f1b8894a51837cccf7f as builder
+FROM docker.io/library/golang:bullseye@sha256:cbcd7061cbb3d1ffbeacf7e9bd2a9de0f0cde119a8f9761fe516288d874a17c7 as builder
 
 ARG VERSION
 ARG CHANNEL
