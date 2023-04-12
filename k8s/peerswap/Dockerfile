@@ -15,7 +15,7 @@ RUN \
   && go build -buildmode=pie -ldflags "-linkmode=external -X main.GitCommit=${VERSION}" -o /build/pscli ./cmd/peerswaplnd/pscli \
   && chmod -R a+x /build
 
-FROM docker.io/library/debian:bullseye-slim@sha256:7acda01e55b086181a6fa596941503648e423091ca563258e2c1657d140355b1
+FROM docker.io/library/debian:bullseye-slim@sha256:9404b05bd09b57c76eccc0c5505b3c88b5feccac808d9b193a4fbac87bb44745
 
 LABEL maintainer="Anthony Rabbito <hello@anthonyrabbito.com>"
 
