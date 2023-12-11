@@ -10,6 +10,7 @@ FROM quay.io/fedora/fedora-coreos:stable@sha256:31560c0a6191967ff8b601684a2e82a8
 COPY --from=butane /config.ign config.ign
 
 RUN \
+  rpm-ostree install crio && \
   # https://github.com/coreos/fedora-coreos-tracker/issues/1345
   rpm-ostree install amd-gpu-firmware && \
   /usr/libexec/ignition-apply config.ign && \
