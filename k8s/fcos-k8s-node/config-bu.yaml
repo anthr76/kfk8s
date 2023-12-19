@@ -85,6 +85,7 @@ systemd:
           --volume /lib/modules:/lib/modules:ro \
           --volume /run:/run \
           --volume /sys/fs/cgroup:/sys/fs/cgroup \
+          --volume /sys/devices/system:/sys/devices/system \
           --volume /etc/selinux:/etc/selinux \
           --volume /sys/fs/selinux:/sys/fs/selinux \
           --volume /var/lib/calico:/var/lib/calico:ro \
@@ -135,6 +136,7 @@ systemd:
           --volume /lib/modules:/lib/modules:ro \
           --volume /run:/run \
           --volume /sys/fs/cgroup:/sys/fs/cgroup \
+          --volume /sys/devices/system:/sys/devices/system \
           --volume /etc/selinux:/etc/selinux \
           --volume /sys/fs/selinux:/sys/fs/selinux \
           --volume /var/lib/calico:/var/lib/calico:ro \
