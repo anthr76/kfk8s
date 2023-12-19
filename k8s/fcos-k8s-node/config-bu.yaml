@@ -65,7 +65,7 @@ systemd:
         RequiresMountsFor=/run/containers/storage
         [Service]
         # renovate: docker-image
-        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.9
+        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.17
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /opt/cni/bin
@@ -115,7 +115,7 @@ systemd:
         RequiresMountsFor=/run/containers/storage
         [Service]
         # renovate: docker-image
-        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.9
+        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.17
         ExecStartPre=/bin/mkdir -p /etc/cni/net.d
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/bin/mkdir -p /opt/cni/bin
@@ -183,7 +183,7 @@ systemd:
         Type=oneshot
         RemainAfterExit=true
         WorkingDirectory=/etc/kubernetes/bootstrap
-        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.9
+        Environment=KUBELET_IMAGE=ghcr.io/anthr76/kubelet-1.24:1.24.17
         ExecStartPre=-/usr/bin/podman rm bootstrap
         ExecStart=/usr/bin/podman run --name bootstrap \
             --network host \
