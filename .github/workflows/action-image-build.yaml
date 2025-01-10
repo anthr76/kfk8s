@@ -42,7 +42,7 @@ env:
 jobs:
   build-and-test:
     name: Build and test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: inputs.imagesToBuild != '' && inputs.imagesToBuild != '[]'
     strategy:
       matrix:
@@ -173,7 +173,7 @@ jobs:
   # Summarize matrix https://github.community/t/status-check-for-a-matrix-jobs/127354/7
   build_success:
     name: Build matrix success
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - build-and-test
     if: ${{ always() }}
