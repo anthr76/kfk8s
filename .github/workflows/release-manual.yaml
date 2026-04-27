@@ -27,7 +27,7 @@ jobs:
     outputs:
       matrix: ${{ steps.determine-images.outputs.changes }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           token: ${{ env.TOKEN }}
 
@@ -54,7 +54,7 @@ jobs:
           fi
 
   images-build:
-    uses: anthr76/kfk8s/.github/workflows/action-image-build.yaml@main
+    uses: anthr76/kfk8s/.github/workflows/action-image-build.yaml@d6f172baae6d9a46dae2d20932df924a81684ccb # main
     if: needs.generate-build-matrix.outputs.matrix != '[]'
     needs:
       - generate-build-matrix
