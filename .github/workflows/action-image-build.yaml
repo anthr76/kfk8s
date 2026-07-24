@@ -135,7 +135,7 @@ jobs:
       - name: Push To GHCR
         id: push_to_ghcr
         if: ${{ inputs.pushImages == 'true' }}
-        uses: redhat-actions/push-to-registry@v2.8
+        uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3.0.0
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: ${{ steps.build_image.outputs.tags }}
