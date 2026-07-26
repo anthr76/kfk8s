@@ -109,7 +109,7 @@ jobs:
 
       - name: Build all platforms
         id: build_image
-        uses: redhat-actions/buildah-build@v2.13
+        uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
         with:
           build-args: |-
             VERSION=${{ steps.vars.outputs.chan_upstream_version }}
