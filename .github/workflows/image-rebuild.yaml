@@ -18,7 +18,7 @@ jobs:
       addedOrModifiedImages: ${{ steps.collect-changes.outputs.addedOrModifiedImages }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
 
       - name: Collect changes
         id: collect-changes
@@ -37,7 +37,7 @@ jobs:
         run: sudo apt-get install moreutils jo
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
         with:
           fetch-depth: 0
 
