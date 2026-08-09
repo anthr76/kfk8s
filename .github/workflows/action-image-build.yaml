@@ -109,7 +109,7 @@ jobs:
 
       - name: Build all platforms
         id: build_image
-        uses: redhat-actions/buildah-build@v2.13
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           build-args: |-
             VERSION=${{ steps.vars.outputs.chan_upstream_version }}
@@ -135,7 +135,7 @@ jobs:
       - name: Push To GHCR
         id: push_to_ghcr
         if: ${{ inputs.pushImages == 'true' }}
-        uses: redhat-actions/push-to-registry@v2.8
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: ${{ steps.build_image.outputs.tags }}
@@ -162,7 +162,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Send Discord Webhook
-        uses: sarisia/actions-status-discord@v1
+        uses: sarisia/actions-status-discord@eb045afee445dc055c18d3d90bd0f244fd062708 # v1
         if: ${{ always() && inputs.sendNotification == 'true' }}
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
