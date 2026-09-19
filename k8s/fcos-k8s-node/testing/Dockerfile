@@ -1,4 +1,4 @@
-FROM quay.io/coreos/butane@sha256:8d960cc42d7f2625196bc347fb6ee42540310dacd6aeddb4308f11005485e13a as butane
+FROM quay.io/coreos/butane@sha256:fd38df939588f58e32fca72e5af3ae8fc6719c75638daf67a035efe5434e8000 as butane
 
 COPY ./k8s/fcos-k8s-node/testing/config-bu.yaml /config.bu.yaml
 
