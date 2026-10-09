@@ -59,7 +59,7 @@ jobs:
           echo "changes=${output}" >> $GITHUB_OUTPUT
 
   images-build:
-    uses: anthr76/kfk8s/.github/workflows/action-image-build.yaml@main
+    uses: anthr76/kfk8s/.github/workflows/action-image-build.yaml@fbabb7edfe72cebc2de4ced159af75ddbac563fe # main
     needs:
       - generate-build-matrix
     with:
